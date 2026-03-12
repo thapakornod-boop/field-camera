@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>Camera</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  width:100%;height:100%;height:100dvh;
+  background:#000;overflow:hidden;
+  font-family:'Sarabun',sans-serif;
+}
+
+/* fullscreen video */
+#camVideo{
+  position:fixed;inset:0;
+  width:100%;height:100%;
+  object-fit:cover;
+  display:block;
+  background:#000;
+}
+
+/* top bar */
+.top-bar{
+  position:fixed;top:0;left:0;right:0;z-index:20;
+  padding:12px 16px;
+  padding-top:max(env(safe-area-inset-top,0px),12px);
+  background:linear-gradient(to bottom,rgba(0,0,0,.7) 0%,transparent 100%);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.top-title{
+  color:rgba(255,255,255,.8);
+  font-size:.85rem;letter-spacing:2px;text-transform:uppercase;
+}
+
+/* bottom bar */
+.bottom-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:20;
+  padding:20px 32px;
+  padding-bottom:max(env(safe-area-inset-bottom,0px),20px);
+  background:linear-gradient(to top,rgba(0,0,0,.7) 0%,transparent 100%);
+  display:flex;align-items:center;justify-content:space-between;
+}
+
+/* icon buttons */
+.btn-icon{
+  width:48px;height:48px;border-radius:50%;
+  background:rgba(0,0,0,.45);backdrop-filter:blur(8px);
+  border:1.5px solid rgba(255,255,255,.2);
+  color:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.25rem;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .15s,transform .1s;
+}
+.btn-icon:active{background:rgba(255,255,255,.2);transform:scale(.92)}
+.btn-icon.hidden{visibility:hidden;pointer-events:none}
+
+/* shutter button */
+.btn-shutter{
+  width:76px;height:76px;border-radius:50%;
+  background:transparent;
+  border:4px solid rgba(255,255,255,.9);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  -webkit-tap-highlight-color:transparent;
+  position:relative;
+  transition:transform .1s;
+}
+.btn-shutter::after{
+  content:'';
+  width:60px;height:60px;border-radius:50%;
+  background:rgba(255,255,255,.92);
+  transition:transform .12s,background .12s;
+}
+.btn-shutter:active{transform:scale(.9)}
+.btn-shutter:active::after{background:#ddd;transform:scale(.93)}
+
+/* loading screen */
+#loadingScreen{
+  position:fixed;inset:0;z-index:50;
+  background:#000;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:16px;
+  color:rgba(255,255,255,.6);font-size:.9rem;
+}
+#loadingScreen .spin{
+  width:44px;height:44px;
+  border:3px solid rgba(255,255,255,.1);
+  border-top-color:rgba(255,255,255,.8);
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* error screen */
+#errorScreen{
+  position:fixed;inset:0;z-index:50;
+  background:#0d0f14;
+  display:none;flex-direction:column;
+  align-items:center;justify-content:center;gap:16px;
+  padding:32px;text-align:center;color:#e8ecf4;
+}
+#errorScreen .err-icon{font-size:3.5rem;color:#e8341a;margin-bottom:4px}
+#errorScreen .err-title{font-size:1.15rem;font-weight:700}
+#errorScreen .err-detail{font-size:.82rem;color:#6b7591;line-height:1.7;max-width:280px}
+.btn-close-err{
+  margin-top:8px;
+  background:#e8341a;border:none;color:#fff;
+  border-radius:12px;padding:13px 32px;
+  font-size:.95rem;font-weight:600;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* flash */
+#flash{
+  position:fixed;inset:0;z-index:40;
+  background:#fff;opacity:0;pointer-events:none;
+  transition:opacity .06s ease-out;
+}
+#flash.on{opacity:1}
+
+/* grid overlay (optional viewfinder feel) */
+.grid-overlay{
+  position:fixed;inset:0;z-index:5;pointer-events:none;
+  display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr 1fr;
+}
+.grid-overlay span{border:0.5px solid rgba(255,255,255,.08)}
+</style>
+</head>
+<body>
+
+<video id="camVideo" autoplay playsinline muted></video>
+
+<!-- Rule-of-thirds grid -->
+<div class="grid-overlay">
+  <span></span><span></span><span></span>
+  <span></span><span></span><span></span>
+  <span></span><span></span><span></span>
+</div>
+
+<!-- Flash -->
+<div id="flash"></div>
+
+<!-- Loading -->
+<div id="loadingScreen">
+  <div class="spin"></div>
+  <div>กำลังเปิดกล้อง...</div>
+</div>
+
+<!-- Error -->
+<div id="errorScreen">
+  <div class="err-icon"><i class="bi bi-camera-video-off-fill"></i></div>
+  <div class="err-title" id="errTitle">ไม่สามารถเปิดกล้องได้</div>
+  <div class="err-detail" id="errDetail">เกิดข้อผิดพลาด</div>
+  <button class="btn-close-err" onclick="window.close()">ปิดหน้าต่างนี้</button>
+</div>
+
+<!-- Top bar -->
+<div class="top-bar">
+  <button class="btn-icon" onclick="closeCam()" title="ปิด">
+    <i class="bi bi-x-lg"></i>
+  </button>
+  <span class="top-title">ถ่ายรูป</span>
+  <button class="btn-icon" id="btnFlip" onclick="flipCam()" title="สลับกล้อง">
+    <i class="bi bi-arrow-repeat"></i>
+  </button>
+</div>
+
+<!-- Bottom bar -->
+<div class="bottom-bar">
+  <div style="width:48px"></div>
+  <button class="btn-shutter" id="btnShutter" onclick="capture()" title="ถ่ายรูป"></button>
+  <div style="width:48px"></div>
+</div>
+
+<canvas id="snapCanvas" style="display:none"></canvas>
+
+<script>
+// ── opener origin (รับจาก query string เพื่อ postMessage) ──
+const params  = new URLSearchParams(location.search);
+const ORIGIN  = params.get('origin') || '*';
+
+let stream    = null;
+let facing    = 'environment';
+let busy      = false;
+
+// ── start camera ──────────────────────────────────────────────
+async function startCamera(facingMode) {
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+
+  show('loadingScreen');
+
+  // try ideal facing first, fallback to basic
+  let s;
+  try {
+    s = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: facingMode }, width: { ideal: 1920 }, height: { ideal: 1080 } },
+      audio: false
+    });
+  } catch (e1) {
+    try {
+      s = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+    } catch (e2) {
+      hide('loadingScreen');
+      showError(e2);
+      return;
+    }
+  }
+
+  stream = s;
+  const video = document.getElementById('camVideo');
+  video.srcObject = stream;
+  try { await video.play(); } catch(e) {}
+
+  // mirror front cam
+  video.style.transform = facingMode === 'user' ? 'scaleX(-1)' : 'none';
+
+  hide('loadingScreen');
+
+  // show/hide flip button
+  try {
+    const devs = await navigator.mediaDevices.enumerateDevices();
+    const cams = devs.filter(d => d.kind === 'videoinput');
+    document.getElementById('btnFlip').classList.toggle('hidden', cams.length < 2);
+  } catch(e) {
+    document.getElementById('btnFlip').classList.add('hidden');
+  }
+}
+
+// ── flip front/back ───────────────────────────────────────────
+async function flipCam() {
+  facing = facing === 'environment' ? 'user' : 'environment';
+  await startCamera(facing);
+}
+
+// ── capture ───────────────────────────────────────────────────
+function capture() {
+  if (busy) return;
+  busy = true;
+
+  // flash
+  const flash = document.getElementById('flash');
+  flash.classList.add('on');
+  setTimeout(() => flash.classList.remove('on'), 120);
+
+  const video  = document.getElementById('camVideo');
+  const canvas = document.getElementById('snapCanvas');
+  const w = video.videoWidth  || 1280;
+  const h = video.videoHeight || 720;
+  canvas.width = w; canvas.height = h;
+
+  const ctx = canvas.getContext('2d');
+  if (facing === 'user') { ctx.translate(w, 0); ctx.scale(-1, 1); }
+  ctx.drawImage(video, 0, 0, w, h);
+
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+
+  // stop stream
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+
+  // send to opener
+  if (window.opener) {
+    try {
+      window.opener.postMessage({ type: 'CAM_PHOTO', dataUrl }, ORIGIN);
+    } catch(e) {
+      window.opener.postMessage({ type: 'CAM_PHOTO', dataUrl }, '*');
+    }
+  }
+
+  setTimeout(() => window.close(), 150);
+}
+
+// ── close ──────────────────────────────────────────────────────
+function closeCam() {
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+  if (window.opener) window.opener.postMessage({ type: 'CAM_CANCEL' }, '*');
+  window.close();
+}
+
+// ── error display ─────────────────────────────────────────────
+function showError(err) {
+  console.error('Camera error:', err.name, err.message);
+  let title  = 'ไม่สามารถเปิดกล้องได้';
+  let detail = err.message;
+  if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+    title  = 'ไม่ได้รับอนุญาตเข้าถึงกล้อง';
+    detail = 'กรุณากด "Allow" / "อนุญาต" บนแถบ URL ด้านบน แล้วรีเฟรชหน้านี้';
+  } else if (err.name === 'NotFoundError') {
+    title  = 'ไม่พบกล้อง';
+    detail = 'อุปกรณ์นี้ไม่มีกล้องที่ใช้งานได้';
+  } else if (err.name === 'NotReadableError') {
+    title  = 'กล้องถูกใช้งานอยู่';
+    detail = 'กรุณาปิดแอปอื่นที่ใช้กล้องอยู่ แล้วกดปุ่มปิดและลองใหม่';
+  } else if (err.name === 'SecurityError') {
+    title  = 'Blocked โดย Security Policy';
+    detail = 'ต้องเปิดผ่าน HTTPS เท่านั้น (GitHub Pages ใช้ได้แน่นอน)';
+  }
+  document.getElementById('errTitle').textContent  = title;
+  document.getElementById('errDetail').textContent = detail;
+  document.getElementById('errorScreen').style.display = 'flex';
+}
+
+function show(id) { document.getElementById(id).style.display = 'flex'; }
+function hide(id) { document.getElementById(id).style.display = 'none'; }
+
+// cleanup on unload
+window.addEventListener('beforeunload', () => {
+  if (stream) stream.getTracks().forEach(t => t.stop());
+});
+
+// kick off
+startCamera(facing);
+</script>
+</body>
+</html>
