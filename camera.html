@@ -4,89 +4,45 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Camera App — Cross Platform</title>
+  <title>Camera</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg-deep: #0a0a0a;
-      --bg-panel: #111111;
-      --bg-glass: rgba(255,255,255,0.07);
+      --bg: #0a0a0a;
+      --panel: #111;
       --border: rgba(255,255,255,0.13);
-      --border-hi: rgba(255,255,255,0.38);
-      --text-primary: #f0f0f0;
-      --text-secondary: #888;
-      --text-hint: #444;
-      --accent-red: #e22222;
-      --accent-green: #44cc66;
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 18px;
+      --text: #f0f0f0;
+      --muted: #888;
+      --hint: #444;
+      --green: #44cc66;
+      --red: #e22222;
     }
-
     html, body {
-      height: 100%;
-      background: var(--bg-deep);
-      color: var(--text-primary);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      height: 100%; background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
+      overflow: hidden;
     }
-
     #app {
-      max-width: 540px;
-      margin: 0 auto;
-      min-height: 100dvh;
+      height: 100dvh;
       display: flex;
       flex-direction: column;
-      background: var(--bg-deep);
-    }
-
-    /* ── Header ── */
-    header {
-      padding: 16px 20px 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 0.5px solid var(--border);
-    }
-    .app-title {
-      font-size: 17px;
-      font-weight: 600;
-      letter-spacing: -0.3px;
-    }
-    .app-subtitle {
-      font-size: 12px;
-      color: var(--text-secondary);
-      margin-top: 2px;
-    }
-    .header-badge {
-      font-size: 11px;
-      font-weight: 500;
-      padding: 5px 11px;
-      border-radius: 20px;
-      border: 0.5px solid var(--border);
-      color: var(--text-secondary);
-      letter-spacing: 0.3px;
+      background: var(--bg);
     }
 
     /* ── Viewfinder ── */
     #viewfinder-wrap {
-      width: 100%;
-      background: #0d0d0d;
+      flex: 1;
       position: relative;
-      overflow: hidden;
-      flex-shrink: 0;
-      aspect-ratio: 4/3;
+      background: #0d0d0d;
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
     }
-
     #video {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       object-fit: cover;
       display: none;
       transform: scaleX(-1);
@@ -98,78 +54,43 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 14px;
+      gap: 16px;
       padding: 40px 24px;
       text-align: center;
     }
     .cam-ring {
       width: 80px; height: 80px;
       border: 1.5px solid #2a2a2a;
-      border-radius: var(--radius-lg);
+      border-radius: 18px;
       display: flex; align-items: center; justify-content: center;
       background: #111;
     }
-    .placeholder-title {
-      font-size: 15px;
-      font-weight: 500;
-      color: #777;
-    }
-    .placeholder-sub {
-      font-size: 12px;
-      color: var(--text-hint);
-      line-height: 1.7;
-    }
+    .placeholder-title { font-size: 15px; font-weight: 500; color: #777; }
+    .placeholder-sub { font-size: 12px; color: var(--hint); line-height: 1.7; }
 
     /* Overlays */
     #live-badge {
-      position: absolute;
-      top: 12px; left: 12px;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 4px 10px;
-      border-radius: 20px;
-      background: var(--accent-red);
-      color: #fff;
-      letter-spacing: 0.8px;
-      display: none;
-      animation: blink 1.8s infinite;
-      z-index: 5;
+      position: absolute; top: 12px; left: 12px;
+      font-size: 11px; font-weight: 600;
+      padding: 4px 10px; border-radius: 20px;
+      background: var(--red); color: #fff;
+      letter-spacing: 0.8px; display: none;
+      animation: blink 1.8s infinite; z-index: 5;
     }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.5} }
 
-    #res-badge {
-      position: absolute;
-      top: 12px; right: 12px;
-      font-size: 11px;
-      padding: 4px 10px;
-      border-radius: 20px;
-      background: rgba(0,0,0,0.55);
-      color: #aaa;
-      display: none;
-      z-index: 5;
-      backdrop-filter: blur(4px);
-    }
-
     #grid-overlay {
-      position: absolute; inset: 0;
-      display: none;
-      z-index: 3;
-      pointer-events: none;
+      position: absolute; inset: 0; display: none; z-index: 3; pointer-events: none;
     }
     #grid-overlay.show { display: block; }
-    .grid-line {
-      position: absolute;
-      background: rgba(255,255,255,0.12);
-    }
+    .grid-line { position: absolute; background: rgba(255,255,255,0.12); }
     .grid-h { left: 0; right: 0; height: 0.5px; }
     .grid-v { top: 0; bottom: 0; width: 0.5px; }
 
     #flash-overlay {
       position: absolute; inset: 0;
-      background: #fff;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 20;
+      background: #fff; opacity: 0;
+      pointer-events: none; z-index: 20;
       transition: opacity 0.05s;
     }
     #flash-overlay.flash { opacity: 0.95; }
@@ -178,32 +99,30 @@
 
     /* ── Controls ── */
     #controls {
-      background: var(--bg-panel);
+      background: var(--panel);
       border-top: 0.5px solid var(--border);
-      border-bottom: 0.5px solid var(--border);
-      padding: 18px 20px;
+      padding: 16px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
+      flex-shrink: 0;
     }
-
     .ctrl-btn {
-      background: var(--bg-glass);
+      background: rgba(255,255,255,0.07);
       border: 0.5px solid var(--border);
-      color: var(--text-primary);
+      color: var(--text);
       border-radius: 50%;
-      width: 50px; height: 50px;
+      width: 48px; height: 48px;
       display: flex; align-items: center; justify-content: center;
       cursor: pointer;
-      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+      transition: background 0.15s, transform 0.1s;
       flex-shrink: 0;
       -webkit-tap-highlight-color: transparent;
     }
-    .ctrl-btn:hover { background: rgba(255,255,255,0.13); border-color: var(--border-hi); }
+    .ctrl-btn:hover { background: rgba(255,255,255,0.13); }
     .ctrl-btn:active { transform: scale(0.91); }
     .ctrl-btn:disabled { opacity: 0.28; cursor: not-allowed; transform: none; }
-    .ctrl-btn svg { display: block; }
 
     #open-btn {
       background: rgba(255,255,255,0.13);
@@ -214,223 +133,160 @@
       border-color: rgba(226,34,34,0.5);
     }
 
-    #shutter-wrap {
-      display: flex; align-items: center; justify-content: center;
-    }
     #shutter-btn {
-      width: 72px; height: 72px;
+      width: 70px; height: 70px;
       border-radius: 50%;
       border: 3px solid rgba(255,255,255,0.9);
       background: transparent;
       cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      transition: transform 0.1s, border-color 0.15s;
+      transition: transform 0.1s;
       flex-shrink: 0;
       -webkit-tap-highlight-color: transparent;
     }
-    #shutter-btn:hover { border-color: #fff; }
     #shutter-btn:active { transform: scale(0.9); }
     #shutter-btn:disabled { opacity: 0.28; cursor: not-allowed; }
     #shutter-inner {
-      width: 58px; height: 58px;
+      width: 56px; height: 56px;
       border-radius: 50%;
       background: rgba(255,255,255,0.88);
-      transition: border-radius 0.2s, width 0.2s, height 0.2s, background 0.15s;
     }
 
     /* ── Settings Row ── */
     #settings-row {
-      background: var(--bg-panel);
-      padding: 10px 16px;
+      background: var(--panel);
+      padding: 8px 16px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       border-bottom: 0.5px solid var(--border);
       overflow-x: auto;
+      flex-shrink: 0;
     }
     #settings-row::-webkit-scrollbar { display: none; }
-
     #device-select {
-      background: var(--bg-glass);
+      background: rgba(255,255,255,0.07);
       border: 0.5px solid var(--border);
-      color: var(--text-primary);
+      color: var(--text);
       font-size: 12px;
       padding: 7px 12px;
-      border-radius: var(--radius-sm);
+      border-radius: 8px;
       cursor: pointer;
-      flex: 1;
-      min-width: 0;
-      max-width: 220px;
-      appearance: none;
+      flex: 1; min-width: 0;
       -webkit-appearance: none;
     }
     #device-select option { background: #1a1a1a; color: #eee; }
     #device-select:disabled { opacity: 0.3; }
-
     .toggle-btn {
-      background: var(--bg-glass);
+      background: rgba(255,255,255,0.07);
       border: 0.5px solid var(--border);
-      color: var(--text-secondary);
+      color: var(--muted);
       font-size: 12px;
       padding: 7px 14px;
-      border-radius: var(--radius-sm);
+      border-radius: 8px;
       cursor: pointer;
       white-space: nowrap;
       flex-shrink: 0;
       transition: background 0.15s, color 0.15s;
+      font-family: inherit;
       -webkit-tap-highlight-color: transparent;
     }
     .toggle-btn.on {
       background: rgba(68,204,102,0.15);
       border-color: rgba(68,204,102,0.4);
-      color: var(--accent-green);
+      color: var(--green);
     }
 
     /* ── Message ── */
     #msg-bar {
-      padding: 8px 20px;
-      font-size: 12.5px;
-      color: var(--text-secondary);
-      min-height: 34px;
+      padding: 6px 16px;
+      font-size: 12px;
+      color: var(--muted);
+      min-height: 30px;
       display: flex;
       align-items: center;
-      gap: 6px;
-    }
-    #msg-bar.error { color: #e66; }
-    #msg-bar.success { color: var(--accent-green); }
-
-    /* ── Gallery ── */
-    #gallery-wrap {
-      flex: 1;
-      background: var(--bg-deep);
+      background: var(--panel);
       border-top: 0.5px solid var(--border);
-    }
-    #gallery-header {
-      padding: 10px 16px 6px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .gallery-label {
-      font-size: 12px;
-      color: var(--text-secondary);
-      font-weight: 500;
-      letter-spacing: 0.3px;
-    }
-    #clear-btn {
-      font-size: 11px;
-      color: #e66;
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 2px 6px;
-      display: none;
-    }
-    #gallery-strip {
-      display: flex;
-      gap: 8px;
-      padding: 6px 16px 16px;
-      overflow-x: auto;
-      min-height: 80px;
-      align-items: flex-start;
-    }
-    #gallery-strip::-webkit-scrollbar { height: 3px; }
-    #gallery-strip::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
-    #gallery-empty {
-      font-size: 12px;
-      color: var(--text-hint);
-      margin: auto;
-      align-self: center;
-      flex: 1;
-      text-align: center;
-    }
-    .thumb-wrap {
-      position: relative;
       flex-shrink: 0;
     }
-    .thumb {
-      width: 60px; height: 60px;
-      border-radius: var(--radius-sm);
-      object-fit: cover;
-      border: 1px solid var(--border);
-      cursor: pointer;
-      display: block;
-      transition: transform 0.12s, border-color 0.12s;
-    }
-    .thumb:hover { transform: scale(1.07); border-color: var(--border-hi); }
-    .thumb-num {
-      position: absolute;
-      bottom: 4px; left: 4px;
-      background: rgba(0,0,0,0.65);
-      color: #ccc;
-      font-size: 9px;
-      padding: 1px 4px;
-      border-radius: 4px;
-    }
+    #msg-bar.error { color: #e66; }
+    #msg-bar.success { color: var(--green); }
 
-    /* ── Footer ── */
-    footer {
-      padding: 10px 20px 14px;
-      text-align: center;
-      font-size: 11px;
-      color: var(--text-hint);
+    /* ── Use Photo Bar ── */
+    #use-photo-bar {
+      display: none;
+      background: #111;
       border-top: 0.5px solid var(--border);
+      padding: 12px 16px;
+      gap: 10px;
+      flex-shrink: 0;
     }
-    footer a { color: #555; text-decoration: none; }
-    footer a:hover { color: #888; }
+    #use-photo-bar.show { display: flex; }
+    .use-btn {
+      flex: 1; height: 50px;
+      border: none; border-radius: 12px;
+      font-family: inherit; font-size: 0.95rem; font-weight: 600;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .use-btn:active { opacity: 0.8; transform: scale(0.98); }
+    #retake-btn { background: rgba(255,255,255,0.1); color: var(--text); }
+    #confirm-btn { background: var(--green); color: #fff; }
 
-    /* ── Responsive ── */
-    @media (max-width: 380px) {
-      #shutter-btn { width: 62px; height: 62px; }
-      #shutter-inner { width: 50px; height: 50px; }
-      .ctrl-btn { width: 44px; height: 44px; }
+    /* ── Preview overlay ── */
+    #preview-overlay {
+      position: absolute; inset: 0;
+      background: #000;
+      display: none; z-index: 10;
+    }
+    #preview-overlay.show { display: block; }
+    #preview-img {
+      width: 100%; height: 100%;
+      object-fit: contain;
     }
   </style>
 </head>
 <body>
 <div id="app">
 
-  <header>
-    <div>
-      <div class="app-title">Camera App</div>
-      <div class="app-subtitle">Cross-platform · iOS · Android · Desktop</div>
-    </div>
-    <div class="header-badge" id="device-badge">ไม่มีกล้อง</div>
-  </header>
-
-  <!-- Viewfinder -->
   <div id="viewfinder-wrap">
     <span id="live-badge">● LIVE</span>
-    <span id="res-badge" id="res-badge">—</span>
-
     <div id="grid-overlay">
       <div class="grid-line grid-h" style="top:33.3%"></div>
       <div class="grid-line grid-h" style="top:66.6%"></div>
       <div class="grid-line grid-v" style="left:33.3%"></div>
       <div class="grid-line grid-v" style="left:66.6%"></div>
     </div>
-
     <div id="placeholder">
       <div class="cam-ring">
-        <svg width="38" height="38" fill="none" viewBox="0 0 24 24">
+        <svg width="36" height="36" fill="none" viewBox="0 0 24 24">
           <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"
             stroke="#444" stroke-width="1.4" stroke-linejoin="round"/>
           <circle cx="12" cy="13" r="4" stroke="#444" stroke-width="1.4"/>
         </svg>
       </div>
-      <p class="placeholder-title">กดปุ่มด้านล่างเพื่อเปิดกล้อง</p>
-      <p class="placeholder-sub">ต้องการ HTTPS และอนุญาต Permission<br>iOS Safari · Android Chrome · Desktop</p>
+      <p class="placeholder-title">กดปุ่มเปิดกล้องเพื่อเริ่ม</p>
+      <p class="placeholder-sub">iOS · Android · Desktop</p>
     </div>
-
     <video id="video" autoplay playsinline muted webkit-playsinline></video>
+    <div id="preview-overlay">
+      <img id="preview-img" src="" alt="preview">
+    </div>
     <canvas id="canvas"></canvas>
     <div id="flash-overlay"></div>
   </div>
 
-  <!-- Main Controls -->
+  <div id="settings-row">
+    <select id="device-select" disabled>
+      <option>เลือกกล้อง</option>
+    </select>
+    <button class="toggle-btn" id="grid-btn" disabled>Grid</button>
+    <button class="toggle-btn" id="mirror-btn" disabled>กระจก</button>
+  </div>
+
   <div id="controls">
-    <!-- Flip -->
-    <button class="ctrl-btn" id="flip-btn" title="สลับกล้อง" disabled aria-label="สลับกล้อง">
+    <button class="ctrl-btn" id="flip-btn" title="สลับกล้อง" disabled>
       <svg width="22" height="22" fill="none" viewBox="0 0 24 24">
         <path d="M1 4v6h6M23 20v-6h-6" stroke="currentColor" stroke-width="1.7"
           stroke-linecap="round" stroke-linejoin="round"/>
@@ -439,8 +295,7 @@
       </svg>
     </button>
 
-    <!-- Open/Close -->
-    <button class="ctrl-btn" id="open-btn" title="เปิดกล้อง" aria-label="เปิด/ปิดกล้อง">
+    <button class="ctrl-btn" id="open-btn" title="เปิดกล้อง">
       <svg id="open-icon" width="22" height="22" fill="none" viewBox="0 0 24 24">
         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
           stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
@@ -448,330 +303,173 @@
       </svg>
     </button>
 
-    <!-- Shutter -->
-    <div id="shutter-wrap">
-      <button id="shutter-btn" title="ถ่ายภาพ" disabled aria-label="ถ่ายภาพ">
-        <div id="shutter-inner"></div>
-      </button>
-    </div>
-
-    <!-- Download last -->
-    <button class="ctrl-btn" id="dl-btn" title="ดาวน์โหลดภาพล่าสุด" disabled aria-label="ดาวน์โหลด">
-      <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"
-          stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+    <button id="shutter-btn" title="ถ่ายภาพ" disabled>
+      <div id="shutter-inner"></div>
     </button>
 
-    <!-- Grid toggle -->
-    <button class="ctrl-btn" id="grid-btn" title="เส้น Grid" disabled aria-label="เส้น Grid">
-      <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-        <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.7"/>
-        <line x1="9" y1="3" x2="9" y2="21" stroke="currentColor" stroke-width="1.7"/>
-        <line x1="15" y1="3" x2="15" y2="21" stroke="currentColor" stroke-width="1.7"/>
-        <line x1="3" y1="9" x2="21" y2="9" stroke="currentColor" stroke-width="1.7"/>
-        <line x1="3" y1="15" x2="21" y2="15" stroke="currentColor" stroke-width="1.7"/>
+    <select id="device-select-ctrl" disabled style="
+      background:rgba(255,255,255,0.07);
+      border:0.5px solid rgba(255,255,255,0.13);
+      color:#ccc; font-size:11px;
+      padding:6px 10px; border-radius:8px;
+      cursor:pointer; max-width:110px;
+      -webkit-appearance:none;
+      display:none;
+    "></select>
+
+    <!-- placeholder slot -->
+    <div style="width:48px;height:48px;flex-shrink:0;"></div>
+  </div>
+
+  <!-- ใช้รูปนี้ / ถ่ายใหม่ -->
+  <div id="use-photo-bar">
+    <button class="use-btn" id="retake-btn">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M1 4v6h6M3.51 15a9 9 0 1017.3-5.31"/>
       </svg>
+      ถ่ายใหม่
+    </button>
+    <button class="use-btn" id="confirm-btn">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+      </svg>
+      ใช้รูปนี้
     </button>
   </div>
 
-  <!-- Settings Row -->
-  <div id="settings-row">
-    <select id="device-select" disabled aria-label="เลือกกล้อง">
-      <option>เลือกกล้อง / อุปกรณ์</option>
-    </select>
-    <button class="toggle-btn" id="mirror-btn" disabled>กระจก</button>
-    <button class="toggle-btn" id="hd-btn" disabled>HD</button>
-  </div>
-
-  <!-- Message Bar -->
-  <div id="msg-bar">รองรับ iOS · Android · Desktop — ต้องใช้งานบน HTTPS</div>
-
-  <!-- Gallery -->
-  <div id="gallery-wrap">
-    <div id="gallery-header">
-      <span class="gallery-label">ภาพถ่าย <span id="photo-count">0</span> รูป</span>
-      <button id="clear-btn">ล้างทั้งหมด</button>
-    </div>
-    <div id="gallery-strip">
-      <span id="gallery-empty">ภาพที่ถ่ายจะปรากฏที่นี่ • คลิกภาพเพื่อดาวน์โหลด</span>
-    </div>
-  </div>
-
-  <footer>
-    Camera App · Built with Web API &amp; ❤️ ·
-    <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
-  </footer>
-
+  <div id="msg-bar">รองรับ iOS · Android · Desktop — ต้องใช้บน HTTPS</div>
 </div>
 
 <script>
-  // ── Elements ──
-  const video       = document.getElementById('video');
-  const canvas      = document.getElementById('canvas');
-  const placeholder = document.getElementById('placeholder');
-  const shutterBtn  = document.getElementById('shutter-btn');
-  const shutterInner= document.getElementById('shutter-inner');
-  const flipBtn     = document.getElementById('flip-btn');
-  const openBtn     = document.getElementById('open-btn');
-  const openIcon    = document.getElementById('open-icon');
-  const dlBtn       = document.getElementById('dl-btn');
-  const gridBtn     = document.getElementById('grid-btn');
-  const mirrorBtn   = document.getElementById('mirror-btn');
-  const hdBtn       = document.getElementById('hd-btn');
-  const deviceSelect= document.getElementById('device-select');
-  const galleryStrip= document.getElementById('gallery-strip');
-  const galleryEmpty= document.getElementById('gallery-empty');
-  const clearBtn    = document.getElementById('clear-btn');
-  const liveBadge   = document.getElementById('live-badge');
-  const resBadge    = document.getElementById('res-badge');
-  const deviceBadge = document.getElementById('device-badge');
-  const gridOverlay = document.getElementById('grid-overlay');
-  const flashOverlay= document.getElementById('flash-overlay');
-  const msgBar      = document.getElementById('msg-bar');
-  const photoCount  = document.getElementById('photo-count');
+  const video        = document.getElementById('video');
+  const canvas       = document.getElementById('canvas');
+  const placeholder  = document.getElementById('placeholder');
+  const shutterBtn   = document.getElementById('shutter-btn');
+  const flipBtn      = document.getElementById('flip-btn');
+  const openBtn      = document.getElementById('open-btn');
+  const openIcon     = document.getElementById('open-icon');
+  const gridBtn      = document.getElementById('grid-btn');
+  const mirrorBtn    = document.getElementById('mirror-btn');
+  const deviceSelect = document.getElementById('device-select');
+  const gridOverlay  = document.getElementById('grid-overlay');
+  const flashOverlay = document.getElementById('flash-overlay');
+  const liveBadge    = document.getElementById('live-badge');
+  const msgBar       = document.getElementById('msg-bar');
+  const usePhotoBar  = document.getElementById('use-photo-bar');
+  const previewOverlay = document.getElementById('preview-overlay');
+  const previewImg   = document.getElementById('preview-img');
+  const retakeBtn    = document.getElementById('retake-btn');
+  const confirmBtn   = document.getElementById('confirm-btn');
 
-  // ── State ──
-  let stream      = null;
-  let facingMode  = 'user';
-  let devices     = [];
-  let photos      = [];
-  let isOpen      = false;
-  let mirrorOn    = true;
-  let hdOn        = false;
-  let gridOn      = false;
+  let stream     = null;
+  let devices    = [];
+  let facingMode = 'user';
+  let mirrorOn   = true;
+  let gridOn     = false;
+  let isOpen     = false;
+  let capturedDataURL = null;
 
-  // ── Utils ──
   function setMsg(text, type = '') {
     msgBar.textContent = text;
     msgBar.className = type;
   }
-
   function flash() {
     flashOverlay.classList.add('flash');
     setTimeout(() => flashOverlay.classList.remove('flash'), 130);
   }
 
-  function updatePhotoCount() {
-    photoCount.textContent = photos.length;
-    clearBtn.style.display = photos.length ? 'block' : 'none';
-  }
-
-  // ── Open Icon SVG (eye) ──
-  const SVG_EYE = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
-      stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
-    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/>`;
-
-  const SVG_CLOSE = `<line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="1.7"
-      stroke-linecap="round"/>
-    <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="1.7"
-      stroke-linecap="round"/>`;
-
-  // ── Load Devices ──
   async function loadDevices() {
     try {
       const all = await navigator.mediaDevices.enumerateDevices();
       devices = all.filter(d => d.kind === 'videoinput');
       deviceSelect.innerHTML = '';
-      if (!devices.length) {
-        deviceSelect.innerHTML = '<option>ไม่พบกล้อง</option>';
-        return;
-      }
       devices.forEach((d, i) => {
-        const opt = document.createElement('option');
-        opt.value = d.deviceId;
-        opt.textContent = d.label || `กล้อง ${i + 1}`;
-        deviceSelect.appendChild(opt);
+        const o = document.createElement('option');
+        o.value = d.deviceId;
+        o.textContent = d.label || ('กล้อง ' + (i + 1));
+        deviceSelect.appendChild(o);
       });
-      deviceSelect.disabled = false;
+      deviceSelect.disabled = devices.length === 0;
       flipBtn.disabled = devices.length < 2;
-    } catch (e) {
-      console.warn('enumerateDevices:', e);
-    }
+    } catch(e) {}
   }
 
-  // ── Start Camera ──
   async function startCamera(deviceId) {
-    if (stream) {
-      stream.getTracks().forEach(t => t.stop());
-      stream = null;
-    }
-
+    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
     let constraints;
     if (deviceId) {
-      constraints = {
-        video: {
-          deviceId: { exact: deviceId },
-          width: hdOn ? { ideal: 1920 } : { ideal: 1280 },
-          height: hdOn ? { ideal: 1080 } : { ideal: 720 }
-        },
-        audio: false
-      };
+      constraints = { video: { deviceId: { exact: deviceId } }, audio: false };
     } else {
       const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
       constraints = {
-        video: isMobile
-          ? { facingMode, width: { ideal: 1280 }, height: { ideal: 720 } }
-          : { width: { ideal: hdOn ? 1920 : 1280 }, height: { ideal: hdOn ? 1080 : 720 } },
+        video: isMobile ? { facingMode } : true,
         audio: false
       };
     }
-
     try {
       stream = await navigator.mediaDevices.getUserMedia(constraints);
       video.srcObject = stream;
       video.style.display = 'block';
       placeholder.style.display = 'none';
-
-      // mirror
       updateMirror();
-
       await loadDevices();
-
-      // sync dropdown
       const track = stream.getVideoTracks()[0];
-      const settings = track.getSettings();
-      if (settings.deviceId) {
-        const opt = deviceSelect.querySelector(`option[value="${settings.deviceId}"]`);
-        if (opt) deviceSelect.value = settings.deviceId;
-      }
-
-      const label = track.label || 'กล้อง';
-      deviceBadge.textContent = label.length > 18 ? label.slice(0, 18) + '…' : label;
+      const s = track.getSettings();
       liveBadge.style.display = 'inline';
-      resBadge.style.display = 'inline';
-      resBadge.textContent = `${settings.width || '?'}×${settings.height || '?'}`;
-
       shutterBtn.disabled = false;
       gridBtn.disabled = false;
       mirrorBtn.disabled = false;
-      hdBtn.disabled = false;
       isOpen = true;
-
       openBtn.classList.add('active');
-      openIcon.innerHTML = SVG_CLOSE;
-
-      setMsg(`✓ เปิดกล้องสำเร็จ — ${settings.width || '?'}×${settings.height || '?'}px`, 'success');
-    } catch (err) {
+      openIcon.innerHTML = SVG_X;
+      setMsg('✓ เปิดกล้องสำเร็จ — ' + (s.width||'?') + '×' + (s.height||'?') + 'px', 'success');
+    } catch(err) {
       let m = 'ไม่สามารถเปิดกล้องได้';
-      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError')
-        m = 'กรุณาอนุญาตการใช้กล้องในเบราว์เซอร์แล้วลองใหม่';
-      else if (err.name === 'NotFoundError')
-        m = 'ไม่พบกล้องในอุปกรณ์นี้';
-      else if (err.name === 'OverconstrainedError')
-        m = 'กล้องไม่รองรับความละเอียดที่เลือก ลองปิด HD';
-      else if (err.name === 'NotSupportedError' || err.name === 'SecurityError')
-        m = 'ต้องใช้บน HTTPS — กรุณา deploy หรือใช้ localhost';
-      else if (err.name === 'NotReadableError')
-        m = 'กล้องถูกใช้งานโดยแอปอื่นอยู่';
+      if (err.name === 'NotAllowedError')   m = 'กรุณาอนุญาตการใช้กล้อง';
+      if (err.name === 'NotFoundError')     m = 'ไม่พบกล้องในอุปกรณ์';
+      if (err.name === 'NotReadableError')  m = 'กล้องถูกใช้งานโดยแอปอื่น';
+      if (err.name === 'SecurityError' || err.name === 'NotSupportedError')
+                                            m = 'ต้องใช้บน HTTPS';
       setMsg('⚠ ' + m, 'error');
-      console.error('[Camera]', err.name, err.message);
     }
   }
 
-  // ── Stop Camera ──
   function stopCamera() {
     if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
     video.srcObject = null;
     video.style.display = 'none';
     placeholder.style.display = 'flex';
     liveBadge.style.display = 'none';
-    resBadge.style.display = 'none';
-    deviceBadge.textContent = 'ไม่มีกล้อง';
     shutterBtn.disabled = true;
     flipBtn.disabled = true;
     gridBtn.disabled = true;
     mirrorBtn.disabled = true;
-    hdBtn.disabled = true;
     isOpen = false;
     openBtn.classList.remove('active');
     openIcon.innerHTML = SVG_EYE;
     setMsg('ปิดกล้องแล้ว');
   }
 
-  // ── Mirror ──
   function updateMirror() {
     const isRear = facingMode === 'environment';
-    if (mirrorOn && !isRear) {
-      video.classList.remove('rear');
-      video.style.transform = 'scaleX(-1)';
-    } else {
-      video.style.transform = 'scaleX(1)';
-    }
+    video.style.transform = (mirrorOn && !isRear) ? 'scaleX(-1)' : 'scaleX(1)';
     mirrorBtn.classList.toggle('on', mirrorOn);
   }
 
-  // ── Capture ──
-  shutterBtn.addEventListener('click', () => {
-    if (!stream) return;
-    const track = stream.getVideoTracks()[0];
-    const s = track.getSettings();
-    canvas.width  = s.width  || video.videoWidth  || 1280;
-    canvas.height = s.height || video.videoHeight || 720;
+  const SVG_EYE = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+      stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/>`;
+  const SVG_X = `<line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+    <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>`;
 
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const shouldMirror = mirrorOn && facingMode !== 'environment';
-    if (shouldMirror) {
-      ctx.save();
-      ctx.translate(canvas.width, 0);
-      ctx.scale(-1, 1);
-    }
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    if (shouldMirror) ctx.restore();
-
-    flash();
-    const dataURL = canvas.toDataURL('image/jpeg', 0.93);
-    photos.push(dataURL);
-    addThumb(dataURL, photos.length);
-    dlBtn.disabled = false;
-    updatePhotoCount();
-    setMsg(`✓ ถ่ายภาพ #${photos.length} — ${canvas.width}×${canvas.height}px`, 'success');
-  });
-
-  // ── Add Thumbnail ──
-  function addThumb(src, num) {
-    if (galleryEmpty.parentNode) galleryEmpty.remove();
-    const wrap = document.createElement('div');
-    wrap.className = 'thumb-wrap';
-
-    const img = document.createElement('img');
-    img.className = 'thumb';
-    img.src = src;
-    img.title = `ภาพ #${num} — คลิกเพื่อดาวน์โหลด`;
-    img.addEventListener('click', () => downloadPhoto(src, num));
-
-    const label = document.createElement('span');
-    label.className = 'thumb-num';
-    label.textContent = `#${num}`;
-
-    wrap.appendChild(img);
-    wrap.appendChild(label);
-    galleryStrip.appendChild(wrap);
-    galleryStrip.scrollLeft = galleryStrip.scrollWidth;
-  }
-
-  function downloadPhoto(src, num) {
-    const a = document.createElement('a');
-    a.href = src;
-    a.download = `photo_${num}_${Date.now()}.jpg`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  }
-
-  // ── Open / Close ──
   openBtn.addEventListener('click', () => {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      setMsg('⚠ เบราว์เซอร์ไม่รองรับ Camera API — ต้องใช้ HTTPS', 'error');
-      return;
+      setMsg('⚠ ต้องใช้บน HTTPS', 'error'); return;
     }
     if (!isOpen) startCamera();
     else stopCamera();
   });
 
-  // ── Flip ──
   flipBtn.addEventListener('click', () => {
     const opts = Array.from(deviceSelect.options);
     const cur = opts.findIndex(o => o.value === deviceSelect.value);
@@ -781,62 +479,85 @@
     startCamera(devices[next]?.deviceId);
   });
 
-  // ── Device Select ──
   deviceSelect.addEventListener('change', () => {
     if (isOpen) startCamera(deviceSelect.value);
   });
 
-  // ── Download Last ──
-  dlBtn.addEventListener('click', () => {
-    if (!photos.length) return;
-    downloadPhoto(photos[photos.length - 1], photos.length);
-  });
-
-  // ── Grid ──
   gridBtn.addEventListener('click', () => {
     gridOn = !gridOn;
     gridOverlay.classList.toggle('show', gridOn);
-    gridBtn.style.borderColor = gridOn ? 'rgba(68,204,102,0.5)' : '';
-    gridBtn.style.background  = gridOn ? 'rgba(68,204,102,0.12)' : '';
-    gridBtn.style.color       = gridOn ? '#4c6' : '';
+    gridBtn.classList.toggle('on', gridOn);
   });
 
-  // ── Mirror ──
   mirrorBtn.addEventListener('click', () => {
     mirrorOn = !mirrorOn;
     updateMirror();
   });
 
-  // ── HD ──
-  hdBtn.addEventListener('click', () => {
-    hdOn = !hdOn;
-    hdBtn.classList.toggle('on', hdOn);
-    if (isOpen) startCamera(deviceSelect.value || undefined);
+  /* ── Capture ── */
+  shutterBtn.addEventListener('click', () => {
+    if (!stream) return;
+    const track = stream.getVideoTracks()[0];
+    const s = track.getSettings();
+    canvas.width  = s.width  || video.videoWidth  || 1280;
+    canvas.height = s.height || video.videoHeight || 720;
+    const ctx = canvas.getContext('2d');
+    const shouldMirror = mirrorOn && facingMode !== 'environment';
+    if (shouldMirror) { ctx.save(); ctx.translate(canvas.width, 0); ctx.scale(-1, 1); }
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    if (shouldMirror) ctx.restore();
+    flash();
+    capturedDataURL = canvas.toDataURL('image/jpeg', 0.92);
+
+    // แสดง preview
+    previewImg.src = capturedDataURL;
+    previewOverlay.classList.add('show');
+    usePhotoBar.classList.add('show');
+    shutterBtn.disabled = true;
+    setMsg('ตรวจสอบรูป แล้วกด "ใช้รูปนี้"', 'success');
   });
 
-  // ── Clear Gallery ──
-  clearBtn.addEventListener('click', () => {
-    photos = [];
-    galleryStrip.innerHTML = '';
-    galleryStrip.appendChild(galleryEmpty);
-    galleryEmpty.parentNode || galleryStrip.appendChild(galleryEmpty);
-    dlBtn.disabled = true;
-    updatePhotoCount();
-    setMsg('ล้างภาพทั้งหมดแล้ว');
+  /* ── Retake ── */
+  retakeBtn.addEventListener('click', () => {
+    capturedDataURL = null;
+    previewOverlay.classList.remove('show');
+    usePhotoBar.classList.remove('show');
+    shutterBtn.disabled = false;
+    setMsg('พร้อมถ่ายอีกครั้ง');
   });
 
-  // ── Keyboard Shortcut ──
+  /* ══════════════════════════════════════════
+     ใช้รูปนี้ → postMessage กลับไปหน้าหลัก
+     ══════════════════════════════════════════ */
+  confirmBtn.addEventListener('click', () => {
+    if (!capturedDataURL) return;
+    // ส่งรูปกลับไปยัง parent (index.html) ผ่าน postMessage
+    window.parent.postMessage(
+      { type: 'PHOTO_CAPTURED', data: capturedDataURL },
+      '*'
+    );
+    setMsg('✓ ส่งรูปกลับแล้ว...', 'success');
+    // reset
+    capturedDataURL = null;
+    previewOverlay.classList.remove('show');
+    usePhotoBar.classList.remove('show');
+    shutterBtn.disabled = false;
+  });
+
+  /* Keyboard */
   document.addEventListener('keydown', e => {
-    if (e.code === 'Space' && isOpen) { e.preventDefault(); shutterBtn.click(); }
+    if (e.code === 'Space' && isOpen && !shutterBtn.disabled) { e.preventDefault(); shutterBtn.click(); }
     if (e.code === 'KeyO') openBtn.click();
     if (e.code === 'KeyF' && isOpen) flipBtn.click();
-    if (e.code === 'KeyG' && isOpen) gridBtn.click();
+    if (e.code === 'Escape' && capturedDataURL) retakeBtn.click();
+    if (e.code === 'Enter' && capturedDataURL) confirmBtn.click();
   });
 
-  // ── Handle page hide (iOS Safari) ──
   document.addEventListener('visibilitychange', () => {
     if (document.hidden && isOpen) stopCamera();
   });
+
+  setMsg('กด "เปิดกล้อง" เพื่อเริ่มถ่ายรูป');
 </script>
 </body>
 </html>
