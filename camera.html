@@ -10,8 +10,6 @@
     :root{--bg:#0a0a0a;--panel:#111;--border:rgba(255,255,255,.13);--text:#f0f0f0;--muted:#888;--hint:#444;--green:#44cc66;--red:#e22222}
     html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
     #app{height:100dvh;display:flex;flex-direction:column}
-
-    /* Viewfinder */
     #vf{flex:1;position:relative;background:#0d0d0d;display:flex;align-items:center;justify-content:center;overflow:hidden}
     #video{width:100%;height:100%;object-fit:cover;display:none;transform:scaleX(-1)}
     #video.rear{transform:scaleX(1)}
@@ -30,8 +28,6 @@
     #prev-ov{position:absolute;inset:0;background:#000;display:none;z-index:10}
     #prev-ov.show{display:block}
     #prev-img{width:100%;height:100%;object-fit:contain}
-
-    /* Settings */
     #settings{background:var(--panel);padding:8px 14px;display:flex;align-items:center;gap:8px;border-top:.5px solid var(--border);border-bottom:.5px solid var(--border);overflow-x:auto;flex-shrink:0}
     #settings::-webkit-scrollbar{display:none}
     #dev-sel{background:rgba(255,255,255,.07);border:.5px solid var(--border);color:var(--text);font-size:12px;padding:7px 10px;border-radius:8px;cursor:pointer;flex:1;min-width:0;-webkit-appearance:none;font-family:inherit}
@@ -39,8 +35,6 @@
     #dev-sel:disabled{opacity:.3}
     .tbtn{background:rgba(255,255,255,.07);border:.5px solid var(--border);color:var(--muted);font-size:12px;padding:7px 13px;border-radius:8px;cursor:pointer;white-space:nowrap;flex-shrink:0;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:background .15s,color .15s}
     .tbtn.on{background:rgba(68,204,102,.15);border-color:rgba(68,204,102,.4);color:var(--green)}
-
-    /* Controls */
     #ctrl{background:var(--panel);border-top:.5px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0}
     .cbtn{background:rgba(255,255,255,.07);border:.5px solid var(--border);color:var(--text);border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;transition:background .15s,transform .1s}
     .cbtn:active{transform:scale(.91)}
@@ -51,26 +45,18 @@
     #shutter:active{transform:scale(.9)}
     #shutter:disabled{opacity:.28;cursor:not-allowed}
     #sh-in{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.88)}
-
-    /* Use photo bar */
     #use-bar{display:none;background:#111;border-top:.5px solid var(--border);padding:12px 16px;gap:10px;flex-shrink:0}
     #use-bar.show{display:flex}
     .ubtn{flex:1;height:50px;border:none;border-radius:12px;font-family:inherit;font-size:.95rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;-webkit-tap-highlight-color:transparent}
     .ubtn:active{opacity:.8;transform:scale(.98)}
     #retake{background:rgba(255,255,255,.1);color:var(--text)}
     #use-btn{background:var(--green);color:#fff}
-
-    /* Msg */
     #msg{padding:6px 16px;font-size:12px;color:var(--muted);min-height:28px;display:flex;align-items:center;background:var(--panel);border-top:.5px solid var(--border);flex-shrink:0}
     #msg.err{color:#e66}
     #msg.ok{color:var(--green)}
-
-    /* Sent overlay */
     #sent{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:50;gap:16px;text-align:center;padding:32px}
     #sent.show{display:flex}
     .sent-ico{width:72px;height:72px;background:rgba(68,204,102,.2);border:2px solid rgba(68,204,102,.5);border-radius:50%;display:flex;align-items:center;justify-content:center}
-
-    /* LINE warning */
     #line-warn{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:200;gap:16px;padding:32px;text-align:center}
     #line-warn.show{display:flex}
     .lw-box{background:#1a1a1a;border:1px solid #333;border-radius:18px;padding:28px 24px;max-width:340px;width:100%;display:flex;flex-direction:column;align-items:center;gap:14px}
@@ -107,13 +93,11 @@
     <canvas id="canvas"></canvas>
     <div id="flash"></div>
   </div>
-
   <div id="settings">
     <select id="dev-sel" disabled><option>เลือกกล้อง</option></select>
     <button class="tbtn" id="grid-btn" disabled>Grid</button>
     <button class="tbtn" id="mir-btn" disabled>กระจก</button>
   </div>
-
   <div id="ctrl">
     <button class="cbtn" id="flip-btn" disabled>
       <svg width="22" height="22" fill="none" viewBox="0 0 24 24">
@@ -131,7 +115,6 @@
     <div style="width:48px;height:48px;flex-shrink:0"></div>
     <div style="width:48px;height:48px;flex-shrink:0"></div>
   </div>
-
   <div id="use-bar">
     <button class="ubtn" id="retake">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -144,10 +127,7 @@
       </svg>ใช้รูปนี้
     </button>
   </div>
-
   <div id="msg">กด "เปิดกล้อง" เพื่อเริ่มถ่ายรูป</div>
-
-  <!-- ส่งแล้ว -->
   <div id="sent">
     <div class="sent-ico">
       <svg width="32" height="32" fill="none" stroke="#44cc66" stroke-width="2.5" viewBox="0 0 24 24">
@@ -158,8 +138,6 @@
     <p style="font-size:.875rem;color:rgba(255,255,255,.55);line-height:1.6">รูปถูกส่งกลับไปยังฟอร์มแล้ว<br>คุณสามารถปิดหน้าต่างนี้ได้</p>
     <button style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-family:inherit;font-size:.9rem;font-weight:600;padding:12px 32px;border-radius:12px;cursor:pointer;margin-top:4px" onclick="window.close()">ปิดหน้าต่างนี้</button>
   </div>
-
-  <!-- LINE browser warning -->
   <div id="line-warn">
     <div class="lw-box">
       <div class="lw-ico">📷</div>
@@ -174,47 +152,32 @@
     </div>
   </div>
 </div>
-
 <script>
-/* ── KEY สำหรับส่งรูปกลับ ── */
 const STORAGE_KEY = 'field_camera_photo';
 
-/* ── ตรวจจับ LINE browser ── */
-function isLineBrowser() {
-  return /Line\//i.test(navigator.userAgent);
-}
 function isInAppBrowser() {
   const ua = navigator.userAgent;
-  return /Line\/|FBAV|FBAN|Instagram|Twitter|MicroMessenger|WebView|wv\b/i.test(ua)
-    && !/Chrome\/\d/i.test(ua) === false
-    ? /Line\/|FBAV|FBAN|Instagram|Twitter|MicroMessenger/i.test(ua)
-    : false;
+  return /Line\/|FBAV|FBAN|Instagram|Twitter|MicroMessenger/i.test(ua);
 }
-
 function showLineWarning() {
   const warn = document.getElementById('line-warn');
   warn.classList.add('show');
-  // ตั้งค่าปุ่มเปิด Chrome intent
   const btn = document.getElementById('open-chrome');
   const url = location.href;
   const ua = navigator.userAgent;
   if (/Android/i.test(ua)) {
-    // Android: intent URL เปิด Chrome โดยตรง
     btn.href = 'intent://' + url.replace(/https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;end';
   } else {
-    // iOS: เปิด Safari ผ่าน URL scheme ธรรมดา
     btn.href = url;
     btn.target = '_blank';
     btn.rel = 'noreferrer';
   }
 }
-
 function copyLink() {
   navigator.clipboard.writeText(location.href).then(() => {
     document.getElementById('copy-ok').style.display = 'block';
     setTimeout(() => document.getElementById('copy-ok').style.display = 'none', 2000);
   }).catch(() => {
-    // fallback
     const ta = document.createElement('textarea');
     ta.value = location.href;
     document.body.appendChild(ta);
@@ -225,11 +188,7 @@ function copyLink() {
     setTimeout(() => document.getElementById('copy-ok').style.display = 'none', 2000);
   });
 }
-
-// ตรวจสอบทันทีที่โหลด
-if (isInAppBrowser()) {
-  showLineWarning();
-}
+if (isInAppBrowser()) { showLineWarning(); }
 
 /* ── Camera logic ── */
 const video   = document.getElementById('video');
@@ -253,7 +212,8 @@ const retake  = document.getElementById('retake');
 const useBtn  = document.getElementById('use-btn');
 const sentEl  = document.getElementById('sent');
 
-let stream = null, devices = [], facingMode = 'user', mirrorOn = true, gridOn = false, isOpen = false;
+// ── default: กล้องหลัง, ไม่กลับภาพ ──
+let stream = null, devices = [], facingMode = 'environment', mirrorOn = false, gridOn = false, isOpen = false;
 let capturedURL = null;
 
 const SVG_EYE = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/>`;
@@ -261,6 +221,17 @@ const SVG_X   = `<line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" strok
 
 function setMsg(t,c=''){msgEl.textContent=t;msgEl.className=c;}
 function doFlash(){flashEl.classList.add('on');setTimeout(()=>flashEl.classList.remove('on'),130);}
+
+/* หา index ของกล้องหลังจาก device list */
+function findRearCameraIndex(devList) {
+  // ลอง label ก่อน
+  const rearIdx = devList.findIndex(d =>
+    /back|rear|หลัง|environment/i.test(d.label)
+  );
+  if (rearIdx !== -1) return rearIdx;
+  // ถ้าหาไม่เจอจาก label → ใช้ตัวสุดท้าย (มือถือส่วนมาก back cam อยู่ลำดับท้าย)
+  return devList.length > 1 ? devList.length - 1 : 0;
+}
 
 async function loadDevices() {
   try {
@@ -275,6 +246,13 @@ async function loadDevices() {
     });
     devSel.disabled = devices.length === 0;
     flipBtn.disabled = devices.length < 2;
+
+    // ถ้ายังไม่มี stream ที่ active อยู่ → sync dropdown ให้ตรงกับ track ปัจจุบัน
+    if (stream) {
+      const activeId = stream.getVideoTracks()[0]?.getSettings()?.deviceId;
+      const matchIdx = devices.findIndex(d => d.deviceId === activeId);
+      if (matchIdx !== -1) devSel.selectedIndex = matchIdx;
+    }
   } catch(e){}
 }
 
@@ -285,6 +263,7 @@ async function startCamera(deviceId) {
     constraints = { video: { deviceId: { exact: deviceId } }, audio: false };
   } else {
     const mob = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    // desktop ไม่มี facingMode → ใช้ true
     constraints = { video: mob ? { facingMode } : true, audio: false };
   }
   try {
@@ -301,6 +280,12 @@ async function startCamera(deviceId) {
     openBtn.classList.add('active'); openIco.innerHTML = SVG_X;
     setMsg('✓ เปิดกล้องสำเร็จ — '+(s.width||'?')+'×'+(s.height||'?'), 'ok');
   } catch(err) {
+    // ถ้าขอ environment แล้วล้มเหลว ให้ลอง fallback เป็น user
+    if(err.name === 'OverconstrainedError' && facingMode === 'environment') {
+      facingMode = 'user';
+      mirrorOn = true;
+      return startCamera(deviceId);
+    }
     let m = 'ไม่สามารถเปิดกล้องได้';
     if(err.name==='NotAllowedError') m = 'กรุณาอนุญาตการใช้กล้อง';
     else if(err.name==='NotFoundError') m = 'ไม่พบกล้อง';
@@ -319,26 +304,69 @@ function stopCamera() {
 }
 
 function updateMirror() {
-  const rear = facingMode==='environment';
-  video.style.transform = (mirrorOn && !rear) ? 'scaleX(-1)' : 'scaleX(1)';
-  mirBtn.classList.toggle('on', mirrorOn);
+  // กล้องหลัง (environment) ไม่กลับภาพ, กล้องหน้า (user) กลับตาม mirrorOn
+  const rear = facingMode === 'environment';
+  video.style.transform = (!rear && mirrorOn) ? 'scaleX(-1)' : 'scaleX(1)';
+  mirBtn.classList.toggle('on', mirrorOn && !rear);
 }
 
 openBtn.addEventListener('click',()=>{
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){setMsg('⚠ ต้องใช้บน HTTPS','err');return;}
-  if(!isOpen) startCamera(); else stopCamera();
+  if(!isOpen){
+    // ครั้งแรก: ลอง enumerate ก่อน แล้วเลือก rear cam
+    navigator.mediaDevices.enumerateDevices().then(all => {
+      const cams = all.filter(d => d.kind === 'videoinput');
+      if(cams.length > 1 && cams[0].label) {
+        // มี label → เลือก rear cam ตาม label
+        const rearIdx = findRearCameraIndex(cams);
+        facingMode = 'environment';
+        mirrorOn = false;
+        startCamera(cams[rearIdx].deviceId);
+      } else {
+        // ไม่มี label (ยังไม่ได้ grant permission) หรือกล้องเดียว → startCamera ปกติ
+        startCamera();
+      }
+    }).catch(()=> startCamera());
+  } else {
+    stopCamera();
+  }
 });
 
 flipBtn.addEventListener('click',()=>{
-  const opts=Array.from(devSel.options),cur=opts.findIndex(o=>o.value===devSel.value);
-  const next=(cur+1)%devices.length;
-  devSel.selectedIndex=next; facingMode=facingMode==='user'?'environment':'user';
+  const opts = Array.from(devSel.options);
+  const cur = opts.findIndex(o => o.value === devSel.value);
+  const next = (cur + 1) % devices.length;
+  devSel.selectedIndex = next;
+  // อัปเดต facingMode ตาม label ของกล้องที่เลือก
+  const nextLabel = devices[next]?.label || '';
+  if(/back|rear|หลัง|environment/i.test(nextLabel)){
+    facingMode = 'environment'; mirrorOn = false;
+  } else if(/front|หน้า|user|selfie/i.test(nextLabel)){
+    facingMode = 'user'; mirrorOn = true;
+  } else {
+    // toggle ถ้าไม่รู้
+    facingMode = facingMode === 'user' ? 'environment' : 'user';
+    mirrorOn = facingMode === 'user';
+  }
   startCamera(devices[next]?.deviceId);
 });
 
-devSel.addEventListener('change',()=>{ if(isOpen) startCamera(devSel.value); });
+devSel.addEventListener('change',()=>{
+  if(!isOpen) return;
+  const selLabel = devSel.options[devSel.selectedIndex]?.text || '';
+  if(/back|rear|หลัง|environment/i.test(selLabel)){
+    facingMode = 'environment'; mirrorOn = false;
+  } else if(/front|หน้า|user|selfie/i.test(selLabel)){
+    facingMode = 'user'; mirrorOn = true;
+  }
+  startCamera(devSel.value);
+});
+
 gridBtn.addEventListener('click',()=>{ gridOn=!gridOn; gridEl.classList.toggle('show',gridOn); gridBtn.classList.toggle('on',gridOn); });
-mirBtn.addEventListener('click',()=>{ mirrorOn=!mirrorOn; updateMirror(); });
+mirBtn.addEventListener('click',()=>{
+  // toggle mirror เฉพาะตอนใช้กล้องหน้า
+  mirrorOn=!mirrorOn; updateMirror();
+});
 
 shutter.addEventListener('click',()=>{
   if(!stream) return;
@@ -364,57 +392,20 @@ retake.addEventListener('click',()=>{
   shutter.disabled=false; setMsg('พร้อมถ่ายอีกครั้ง');
 });
 
-/* ══════════════════════════════════════════════════════════
-   ใช้รูปนี้ → เขียนลง localStorage (key: field_camera_photo)
-   index.html ที่ GitHub Pages domain เดียวกันจะอ่านได้
-   
-   ** localStorage ข้าม origin ไม่ได้ **
-   แต่ทั้ง index.html (Apps Script) และ camera.html (GitHub)
-   เปิดอยู่ใน browser เดียวกัน → ใช้ window.opener แทน
-   ══════════════════════════════════════════════════════════ */
 useBtn.addEventListener('click',()=>{
   if(!capturedURL) return;
-
   let sent = false;
-
-  // วิธีที่ 1: window.opener.postMessage (ถ้า index เปิด tab นี้)
   if(window.opener && !window.opener.closed){
-    try {
-      window.opener.postMessage({ type:'PHOTO_CAPTURED', data: capturedURL }, '*');
-      sent = true;
-    } catch(e){}
+    try { window.opener.postMessage({ type:'PHOTO_CAPTURED', data: capturedURL }, '*'); sent = true; } catch(e){}
   }
-
-  // วิธีที่ 2: localStorage (same-origin fallback)
-  if(!sent){
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        data: capturedURL,
-        ts: Date.now()
-      }));
-      sent = true;
-    } catch(e){}
-  }
-
-  // วิธีที่ 3: sessionStorage
-  if(!sent){
-    try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
-        data: capturedURL,
-        ts: Date.now()
-      }));
-      sent = true;
-    } catch(e){}
-  }
-
+  if(!sent){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: capturedURL, ts: Date.now() })); sent = true; } catch(e){} }
+  if(!sent){ try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ data: capturedURL, ts: Date.now() })); sent = true; } catch(e){} }
   sentEl.classList.add('show');
   setMsg('✓ ส่งรูปกลับสำเร็จ', 'ok');
-
   capturedURL=null;
   prevOv.classList.remove('show');
   useBar.classList.remove('show');
   shutter.disabled=false;
-
   setTimeout(()=>{ try{ window.close(); }catch(e){} }, 1800);
 });
 
